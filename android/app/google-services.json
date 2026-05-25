@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "193516396834",
+    "project_id": "cozy-session",
+    "storage_bucket": "cozy-session.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:193516396834:android:47c8f4e8ff37ba8693457b",
+        "android_client_info": {
+          "package_name": "com.diaa.cozysession.cozy_session"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5LqZ5IMDZLEnNc_xI138vquhDGVt5iD4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
