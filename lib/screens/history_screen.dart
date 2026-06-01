@@ -36,8 +36,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
                 'History',
@@ -47,10 +47,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 4),
-              const Text(
-                'Your journey through focus and calm.',
-                style: TextStyle(color: AppTheme.textMuted, fontSize: 14),
+              IconButton(
+                onPressed: _reload,
+                icon: const Icon(Icons.refresh),
+                color: AppTheme.textMuted,
               ),
             ],
           ),
