@@ -91,15 +91,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           ),
                         ),
                       );
-
-                      // Sessions exit - list comes next day
-                      return const Center(
-                        child: Text(
-                          'Session found !',
-                          style: TextStyle(color: AppTheme.accent),
-                        ),
-                      );
                     }
+                    // Sessions exit - list comes next day
+                    return const Center(
+                      child: Text(
+                        'Session found !',
+                        style: TextStyle(color: AppTheme.accent),
+                      ),
+                    );
                   },
                 ),
               ),
