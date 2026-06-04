@@ -82,7 +82,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     if (!snapshot.hasData || snapshot.data!.isEmpty) {
                       return const Center(
                         child: Text(
-                          'No sessions yet.\nStart a seesion and press to save it.',
+                          'No sessions yet.\nStart a session and press to save it.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: AppTheme.textMuted,
