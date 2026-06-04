@@ -255,102 +255,110 @@ class _TimerScreenState extends State<TimerScreen>
       context: context,
       backgroundColor: AppTheme.card,
       isScrollControlled: true,
+      constraints: BoxConstraints(
+        // Use 90% of screen height — works on both portrait and landscape
+        maxHeight: MediaQuery.of(context).size.height * 0.9,
+      ),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (_) => StatefulBuilder(
-        builder: (context, setModalState) => Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 16),
-              const Text(
-                'Select Habit',
-                style: TextStyle(
-                  color: AppTheme.textPrimary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const Divider(color: AppTheme.textMuted),
-              ..._habits.map(
-                (h) => ListTile(
-                  title: Text(
-                    h,
-                    style: const TextStyle(color: AppTheme.textPrimary),
+        builder: (context, setModalState) => SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 16),
+                const Text(
+                  'Select Habit',
+                  style: TextStyle(
+                    color: AppTheme.textPrimary,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
                   ),
-                  trailing: IconButton(
-                    icon: const Icon(
-                      Icons.delete_outline,
-                      color: AppTheme.textMuted,
+                ),
+                const Divider(color: AppTheme.textMuted),
+                ..._habits.map(
+                  (h) => ListTile(
+                    title: Text(
+                      h,
+                      style: const TextStyle(color: AppTheme.textPrimary),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _habits.remove(h);
-                        if (_selectedHabit == h && _habits.isNotEmpty) {
-                          _selectedHabit = _habits.first;
-                        }
-                      });
-                      _saveHabits();
-                      setModalState(() {});
+                    trailing: IconButton(
+                      icon: const Icon(
+                        Icons.delete_outline,
+                        color: AppTheme.textMuted,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _habits.remove(h);
+                          if (_selectedHabit == h && _habits.isNotEmpty) {
+                            _selectedHabit = _habits.first;
+                          }
+                        });
+                        _saveHabits();
+                        setModalState(() {});
+                      },
+                    ),
+                    onTap: () {
+                      setState(() => _selectedHabit = h);
+                      Navigator.pop(context);
                     },
                   ),
-                  onTap: () {
-                    setState(() => _selectedHabit = h);
-                    Navigator.pop(context);
-                  },
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: controller,
-                        style: const TextStyle(color: AppTheme.textPrimary),
-                        decoration: InputDecoration(
-                          hintText: 'Add new habit...',
-                          hintStyle: const TextStyle(color: AppTheme.textMuted),
-                          filled: true,
-                          fillColor: AppTheme.background,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: controller,
+                          style: const TextStyle(color: AppTheme.textPrimary),
+                          decoration: InputDecoration(
+                            hintText: 'Add new habit...',
+                            hintStyle: const TextStyle(
+                              color: AppTheme.textMuted,
+                            ),
+                            filled: true,
+                            fillColor: AppTheme.background,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    GestureDetector(
-                      onTap: () {
-                        final name = controller.text.trim();
-                        if (name.isNotEmpty && !_habits.contains(name)) {
-                          setState(() {
-                            _habits.add(name);
-                            _selectedHabit = name;
-                          });
-                          _saveHabits();
-                          setModalState(() {});
-                          controller.clear();
-                        }
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: AppTheme.accent,
-                          borderRadius: BorderRadius.circular(12),
+                      const SizedBox(width: 8),
+                      GestureDetector(
+                        onTap: () {
+                          final name = controller.text.trim();
+                          if (name.isNotEmpty && !_habits.contains(name)) {
+                            setState(() {
+                              _habits.add(name);
+                              _selectedHabit = name;
+                            });
+                            _saveHabits();
+                            setModalState(() {});
+                            controller.clear();
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: AppTheme.accent,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(Icons.add, color: Colors.white),
                         ),
-                        child: const Icon(Icons.add, color: Colors.white),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
