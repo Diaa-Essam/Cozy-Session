@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../data/database_helper.dart';
+import '../utils/formatters.dart';
 
 /// Displays the user's past study sessions in chronological order.
 class HistoryScreen extends StatefulWidget {
@@ -92,12 +93,80 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         ),
                       );
                     }
-                    // Sessions exit - list comes next day
-                    return const Center(
-                      child: Text(
-                        'Session found !',
-                        style: TextStyle(color: AppTheme.accent),
-                      ),
+                    // Sessions exist — show the list
+                    final sessions = snapshot.data!;
+                    return ListView.builder(
+                      itemCount: sessions.length,
+                      itemBuilder: (context, index) {
+                        final session = sessions[index];
+                        // Session number counts from most recent downward
+                        final sessionNumber = sessions.length - index;
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: AppTheme.card,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Row(
+                            children: [
+                              // Session number badge
+                              Container(
+                                width: 44,
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  color: AppTheme.background,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    '#$sessionNumber',
+                                    style: const TextStyle(
+                                      color: AppTheme.accent,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              // Habit name and date
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      session['habit'] ?? 'Unknown',
+                                      style: const TextStyle(
+                                        color: AppTheme.textPrimary,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      formatDate(session['date']),
+                                      style: TextStyle(
+                                        color: AppTheme.textMuted,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // Duration
+                              Text(
+                                formatDuration(session['duration']),
+                                style: const TextStyle(
+                                  color: AppTheme.accent,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     );
                   },
                 ),
