@@ -77,10 +77,14 @@ class _TimerScreenState extends State<TimerScreen>
   Future<void> _loadHabits() async {
     final prefs = await SharedPreferences.getInstance();
     final saved = prefs.getStringList('habits');
-    setState(() {
-      _habits = saved ?? ['Leetcode'];
-      _selectedHabit = _habits.first;
-    });
+
+    // Only update state if habits haven't been loaded yet.
+    if (_habits.isEmpty) {
+      setState(() {
+        _habits = saved ?? ['Leetcode'];
+        _selectedHabit = _habits.first;
+      });
+    }
   }
 
   Future<void> _saveHabits() async {
