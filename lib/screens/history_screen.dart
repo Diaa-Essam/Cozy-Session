@@ -36,21 +36,72 @@ class _HistoryScreenState extends State<HistoryScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'History',
-                style: TextStyle(
-                  color: AppTheme.textPrimary,
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
+              // ── Header ──────────────────────────────────────
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'History',
+                    style: TextStyle(
+                      color: AppTheme.textPrimary,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: _reload,
+                    icon: const Icon(Icons.refresh),
+                    color: AppTheme.textMuted,
+                  ),
+                ],
               ),
-              IconButton(
-                onPressed: _reload,
-                icon: const Icon(Icons.refresh),
-                color: AppTheme.textMuted,
+              const SizedBox(height: 4),
+              const Text(
+                'Your journey through focus and calm.',
+                style: TextStyle(color: AppTheme.textMuted, fontSize: 14),
+              ),
+              const SizedBox(height: 24),
+              // Section 5 here
+              Expanded(
+                child: FutureBuilder<List<Map<String, dynamic>>>(
+                  future: _sessionsFuture,
+                  builder: (context, snapshot) {
+                    // Still loading
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: AppTheme.accent,
+                        ),
+                      );
+                    }
+
+                    // No sessions yet
+                    if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          'No sessions yet.\nStart a seesion and press to save it.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: AppTheme.textMuted,
+                            fontSize: 14,
+                            height: 2,
+                          ),
+                        ),
+                      );
+
+                      // Sessions exit - list comes next day
+                      return const Center(
+                        child: Text(
+                          'Session found !',
+                          style: TextStyle(color: AppTheme.accent),
+                        ),
+                      );
+                    }
+                  },
+                ),
               ),
             ],
           ),
