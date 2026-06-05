@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -74,15 +75,25 @@ class _TimerScreenState extends State<TimerScreen>
     _loadHabits();
   }
 
+  // Saves the last selected habit so it persists across restarts
+  Future<void> _saveLastHabit(String habit) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('last_habit', habit);
+  }
+
   Future<void> _loadHabits() async {
     final prefs = await SharedPreferences.getInstance();
     final saved = prefs.getStringList('habits');
+    final lastHabit = prefs.getString('last_habit');
 
     // Only update state if habits haven't been loaded yet.
     if (_habits.isEmpty) {
       setState(() {
         _habits = saved ?? ['Leetcode'];
-        _selectedHabit = _habits.first;
+        // Use last selected habit if it still exists in the list
+        _selectedHabit = (lastHabit != null && _habits.contains(lastHabit))
+            ? lastHabit
+            : _habits.first;
       });
     }
   }
@@ -316,6 +327,7 @@ class _TimerScreenState extends State<TimerScreen>
                     ),
                     onTap: () {
                       setState(() => _selectedHabit = h);
+                      _saveLastHabit(h);
                       Navigator.pop(context);
                     },
                   ),
@@ -352,6 +364,7 @@ class _TimerScreenState extends State<TimerScreen>
                               _selectedHabit = name;
                             });
                             _saveHabits();
+                            _saveLastHabit(name);
                             setModalState(() {});
                             controller.clear();
                           }
