@@ -117,12 +117,19 @@ class _TimerScreenState extends State<TimerScreen>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed && _isRunning) {
       FlutterForegroundTask.getData<int>(key: 'seconds').then((value) {
-        if (value != null && mounted) {
-          setState(() => _elapsedSeconds = value);
+        if (mounted) {
+          setState(() {
+            if (value != null) _elapsedSeconds = value;
+          });
         }
-        _startUiTimer();
+        // Small delay to let the state settle before restarting
+        Future.delayed(const Duration(milliseconds: 200), () {
+          if (mounted && _isRunning) _startUiTimer();
+        });
       });
     } else if (state == AppLifecycleState.paused) {
+      // App going to background - cancel UI timer
+      // foreground service keeps ticking
       _uiTimer?.cancel();
     }
   }
