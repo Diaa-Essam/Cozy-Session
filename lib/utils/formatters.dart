@@ -30,6 +30,25 @@ String formatDate(String isoDate) {
     'Nov',
     'Dec',
   ];
+  // convert to 12-hour format
+  int hour = date.hour;
+  int minute = date.minute;
+  String period;
 
-  return '${months[date.month - 1]} ${date.day}, ${date.year}';
+  if (hour == 0) // After 12 PM
+  {
+    hour = 12;
+    period = 'AM';
+  } else if (hour == 12) {
+    period = 'PM';
+  } else if (hour > 12) {
+    hour -= 12;
+    period = 'PM';
+  } else {
+    period = 'AM';
+  }
+
+  String minuteStr = minute.toString().padLeft(2, '0');
+
+  return '${months[date.month - 1]} ${date.day}, ${date.year} • ${hour}:${minuteStr} ${period}';
 }

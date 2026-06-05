@@ -135,6 +135,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    // Habit name
                                     Text(
                                       session['habit'] ?? 'Unknown',
                                       style: const TextStyle(
@@ -151,6 +152,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                         fontSize: 13,
                                       ),
                                     ),
+
+                                    // I want to put when exactly in the day this session happend
                                   ],
                                 ),
                               ),
