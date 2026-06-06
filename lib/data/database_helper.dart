@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -34,6 +36,12 @@ class DatabaseHelper {
   Future<int> insertSession(Map<String, dynamic> session) async {
     final db = await database;
     return await db.insert('sessions', session);
+  }
+
+  // Deletes a session by its id
+  Future<void> deleteSession(int id) async {
+    final db = await database;
+    await db.delete('sessoions', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<List<Map<String, dynamic>>> getAllSessions() async {
