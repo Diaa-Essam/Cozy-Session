@@ -41,7 +41,7 @@ class DatabaseHelper {
   // Deletes a session by its id
   Future<void> deleteSession(int id) async {
     final db = await database;
-    await db.delete('sessoions', where: 'id = ?', whereArgs: [id]);
+    await db.delete('sessions', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<List<Map<String, dynamic>>> getAllSessions() async {
