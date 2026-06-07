@@ -102,6 +102,44 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         // Session number counts from most recent downward
                         final sessionNumber = sessions.length - index;
                         return Dismissible(
+                          // Ask for confirmation before deleting
+                          confirmDismiss: (direction) async {
+                            return await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                backgroundColor: AppTheme.card,
+                                title: const Text(
+                                  'Delete session?',
+                                  style: TextStyle(color: AppTheme.textPrimary),
+                                ),
+                                content: const Text(
+                                  'This cannot be undone.',
+                                  style: TextStyle(color: AppTheme.textMuted),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, false),
+                                    child: const Text(
+                                      'Cancel',
+                                      style: TextStyle(
+                                        color: AppTheme.textMuted,
+                                      ),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, true),
+                                    child: const Text(
+                                      'Delete',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+
                           //Unique key for each session
                           key: Key(session['id'].toString()),
                           direction: DismissDirection.endToStart,
