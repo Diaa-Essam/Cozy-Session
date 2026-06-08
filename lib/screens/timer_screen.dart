@@ -55,7 +55,7 @@ class _TimerScreenState extends State<TimerScreen>
   bool _isStopwatch = true;
   int _elapsedSeconds = 0;
   bool _isRunning = false;
-  final int _countdownSeconds = 25 * 60;
+  int _countdownSeconds = 25 * 60; // For mutable custom input
   int _remainingSeconds = 25 * 60;
 
   List<String> _habits = [];
