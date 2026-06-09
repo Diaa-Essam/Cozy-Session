@@ -122,6 +122,126 @@ class _TimerScreenState extends State<TimerScreen>
     }
   }
 
+  /// Shows the activity picker bottom sheet
+  /// Shows the activity picker bottom sheet
+  void _showActivityPicker() {
+    final TextEditingController controller = TextEditingController();
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppTheme.card,
+      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.9,
+      ),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => StatefulBuilder(
+        builder: (context, setModalState) => SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 16),
+                const Text(
+                  'Select Activity',
+                  style: TextStyle(
+                    color: AppTheme.textPrimary,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const Divider(color: AppTheme.textMuted),
+                ..._activities.map(
+                  (a) => ListTile(
+                    title: Text(
+                      a,
+                      style: const TextStyle(color: AppTheme.textPrimary),
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(
+                        Icons.delete_outline,
+                        color: AppTheme.textMuted,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _activities.remove(a);
+                          if (_selectedActivity == a &&
+                              _activities.isNotEmpty) {
+                            _selectedActivity = _activities.first;
+                          }
+                        });
+                        _saveActivities();
+                        setModalState(() {});
+                      },
+                    ),
+                    onTap: () {
+                      setState(() => _selectedActivity = a);
+                      _saveLastActivity(a);
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: controller,
+                          style: const TextStyle(color: AppTheme.textPrimary),
+                          decoration: InputDecoration(
+                            hintText: 'Add new activity...',
+                            hintStyle: const TextStyle(
+                              color: AppTheme.textMuted,
+                            ),
+                            filled: true,
+                            fillColor: AppTheme.background,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      GestureDetector(
+                        onTap: () {
+                          final name = controller.text.trim();
+                          if (name.isNotEmpty && !_activities.contains(name)) {
+                            setState(() {
+                              _activities.add(name);
+                              _selectedActivity = name;
+                            });
+                            _saveActivities();
+                            _saveLastActivity(name);
+                            setModalState(() {});
+                            controller.clear();
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: AppTheme.accent,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(Icons.add, color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   /// Saves activities list to device storage
   Future<void> _saveActivities() async {
     final prefs = await SharedPreferences.getInstance();
@@ -507,37 +627,149 @@ class _TimerScreenState extends State<TimerScreen>
 
             const SizedBox(height: 40),
 
-            // Habit selector
+            // ── Selectors ─────────────────────────────────────────────────
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: GestureDetector(
-                onTap: _showHabitPicker,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppTheme.card,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        _selectedHabit.isEmpty ? 'Add a habit' : _selectedHabit,
-                        style: TextStyle(
-                          color: _selectedHabit.isEmpty
-                              ? AppTheme.textMuted
-                              : AppTheme.textPrimary,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
+              child: Column(
+                children: [
+                  // Habit selector
+                  GestureDetector(
+                    onTap: () {
+                      setState(() => _habitIsActive = true);
+                      _showHabitPicker();
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppTheme.card,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border(
+                          left: BorderSide(
+                            // Glowing left border when active
+                            color: _habitIsActive
+                                ? AppTheme.accent
+                                : Colors.transparent,
+                            width: 3,
+                          ),
                         ),
                       ),
-                      const Icon(Icons.expand_more, color: AppTheme.accent),
-                    ],
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Habit',
+                                style: TextStyle(
+                                  color: _habitIsActive
+                                      ? AppTheme.accent
+                                      : AppTheme.textMuted,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                _selectedHabit.isEmpty
+                                    ? 'Add a habit'
+                                    : _selectedHabit,
+                                style: TextStyle(
+                                  color: _habitIsActive
+                                      ? AppTheme.textPrimary
+                                      : AppTheme.textMuted,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Icon(
+                            Icons.expand_more,
+                            color: _habitIsActive
+                                ? AppTheme.accent
+                                : AppTheme.textMuted,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+
+                  const SizedBox(height: 10),
+
+                  // Activity selector
+                  GestureDetector(
+                    onTap: () {
+                      setState(() => _habitIsActive = false);
+                      _showActivityPicker();
+                    },
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 12,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppTheme.card,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border(
+                          left: BorderSide(
+                            // Glowing left border when active
+                            color: !_habitIsActive
+                                ? AppTheme.accent
+                                : Colors.transparent,
+                            width: 3,
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Activity',
+                                style: TextStyle(
+                                  color: !_habitIsActive
+                                      ? AppTheme.accent
+                                      : AppTheme.textMuted,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                _selectedActivity.isEmpty
+                                    ? 'Add an activity'
+                                    : _selectedActivity,
+                                style: TextStyle(
+                                  color: !_habitIsActive
+                                      ? AppTheme.textPrimary
+                                      : AppTheme.textMuted,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Icon(
+                            Icons.expand_more,
+                            color: !_habitIsActive
+                                ? AppTheme.accent
+                                : AppTheme.textMuted,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
 
