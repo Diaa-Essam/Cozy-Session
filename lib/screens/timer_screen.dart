@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -63,6 +62,9 @@ class _TimerScreenState extends State<TimerScreen>
 
   List<String> _activities = [];
   String _selectedActivity = '';
+
+  // true = habit is active, false = activity is active
+  bool _habitIsActive = true;
 
   Timer? _uiTimer;
 
