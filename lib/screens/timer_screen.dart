@@ -262,7 +262,7 @@ class _TimerScreenState extends State<TimerScreen>
   Future<void> _saveSession() async {
     if (_elapsedSeconds < 5) return; // ignore accidental taps
     await DatabaseHelper.instance.insertSession({
-      'habit': _selectedHabit,
+      'habit': _habitIsActive ? _selectedHabit : _selectedActivity,
       'duration': _elapsedSeconds,
       'date': DateTime.now().toIso8601String(),
       'notes': '',
