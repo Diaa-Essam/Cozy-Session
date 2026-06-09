@@ -61,6 +61,9 @@ class _TimerScreenState extends State<TimerScreen>
   List<String> _habits = [];
   String _selectedHabit = '';
 
+  List<String> _activities = [];
+  String _selectedActivity = '';
+
   Timer? _uiTimer;
 
   @override
@@ -73,6 +76,7 @@ class _TimerScreenState extends State<TimerScreen>
     _initForegroundTask();
     FlutterForegroundTask.addTaskDataCallback(_onReceiveData);
     _loadHabits();
+    _loadActivities(); // ← add this
   }
 
   // Saves the last selected habit so it persists across restarts
@@ -96,6 +100,36 @@ class _TimerScreenState extends State<TimerScreen>
             : _habits.first;
       });
     }
+  }
+
+  /// Loads activities and last selected activity from device storage
+  Future<void> _loadActivities() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getStringList('activities');
+    final lastActivity = prefs.getString('last_activity');
+
+    if (_activities.isEmpty) {
+      setState(() {
+        _activities = saved ?? ['Walk'];
+        // Restore last selected activity if it still exists
+        _selectedActivity =
+            (lastActivity != null && _activities.contains(lastActivity))
+            ? lastActivity
+            : _activities.first;
+      });
+    }
+  }
+
+  /// Saves activities list to device storage
+  Future<void> _saveActivities() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('activities', _activities);
+  }
+
+  /// Saves the last selected activity so it persists across restarts
+  Future<void> _saveLastActivity(String activity) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('last_activity', activity);
   }
 
   Future<void> _saveHabits() async {
