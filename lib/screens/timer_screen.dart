@@ -232,6 +232,61 @@ class _TimerScreenState extends State<TimerScreen>
     });
   }
 
+  // Shows a dialog to let the user set a custom countdown duration
+  Future<void> _showDurationPicker() async {
+    final TextEditingController controller = TextEditingController(
+      text: (_countdownSeconds ~/ 60).toString(),
+    );
+
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.card,
+        title: const Text(
+          'Set duration',
+          style: TextStyle(color: AppTheme.textPrimary),
+        ),
+        content: TextField(
+          controller: controller,
+          keyboardType: TextInputType.number,
+          style: const TextStyle(color: AppTheme.textPrimary),
+          decoration: InputDecoration(
+            hintText: 'Minutes e.g. 25',
+            hintStyle: const TextStyle(color: AppTheme.textMuted),
+            filled: true,
+            fillColor: AppTheme.background,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ), // ← closes TextField only
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: AppTheme.textMuted),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              final minutes = int.tryParse(controller.text.trim());
+              if (minutes != null && minutes > 0) {
+                setState(() {
+                  _countdownSeconds = minutes * 60;
+                  _remainingSeconds = _countdownSeconds;
+                });
+              }
+              Navigator.pop(context);
+            },
+            child: const Text('Set', style: TextStyle(color: AppTheme.accent)),
+          ),
+        ], // ← closes actions
+      ), // ← closes AlertDialog
+    ); // ← closes showDialog
+  } // ← closes function
+
   void _startStop() {
     if (_isRunning) {
       _stopAll();
