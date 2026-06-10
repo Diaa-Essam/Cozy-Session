@@ -851,6 +851,9 @@ class _TimerScreenState extends State<TimerScreen>
               _isStopwatch = isStopwatch;
               _reset();
             });
+
+            // Show duration picker when switching to Timer mode
+            if (!isStopwatch) _showDurationPicker();
           }
         },
         child: Container(
