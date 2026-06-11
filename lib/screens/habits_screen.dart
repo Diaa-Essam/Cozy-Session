@@ -8,7 +8,7 @@ class HabitsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Center(
       child: Text(
-        'History',
+        'Habits',
         style: TextStyle(color: AppTheme.textPrimary, fontSize: 24),
       ),
     );
