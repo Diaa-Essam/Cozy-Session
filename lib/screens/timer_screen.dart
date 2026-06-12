@@ -95,7 +95,7 @@ class _TimerScreenState extends State<TimerScreen>
     // Only update state if habits haven't been loaded yet.
     if (_habits.isEmpty) {
       setState(() {
-        _habits = saved ?? ['Leetcode'];
+        _habits = (saved != null && saved.isNotEmpty) ? saved : ['LeetCode'] ;
         // Use last selected habit if it still exists in the list
         _selectedHabit = (lastHabit != null && _habits.contains(lastHabit))
             ? lastHabit
@@ -112,7 +112,7 @@ class _TimerScreenState extends State<TimerScreen>
 
     if (_activities.isEmpty) {
       setState(() {
-        _activities = saved ?? ['Walk'];
+        _activities = (saved != null && saved.isNotEmpty) ? saved : ['Walk'] ;
         // Restore last selected activity if it still exists
         _selectedActivity =
             (lastActivity != null && _activities.contains(lastActivity))
