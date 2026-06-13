@@ -95,7 +95,7 @@ class _TimerScreenState extends State<TimerScreen>
     // Only update state if habits haven't been loaded yet.
     if (_habits.isEmpty) {
       setState(() {
-        _habits = (saved != null && saved.isNotEmpty) ? saved : ['LeetCode'] ;
+        _habits = (saved != null && saved.isNotEmpty) ? saved : ['LeetCode'];
         // Use last selected habit if it still exists in the list
         _selectedHabit = (lastHabit != null && _habits.contains(lastHabit))
             ? lastHabit
@@ -112,7 +112,7 @@ class _TimerScreenState extends State<TimerScreen>
 
     if (_activities.isEmpty) {
       setState(() {
-        _activities = (saved != null && saved.isNotEmpty) ? saved : ['Walk'] ;
+        _activities = (saved != null && saved.isNotEmpty) ? saved : ['Walk'];
         // Restore last selected activity if it still exists
         _selectedActivity =
             (lastActivity != null && _activities.contains(lastActivity))
@@ -120,6 +120,56 @@ class _TimerScreenState extends State<TimerScreen>
             : _activities.first;
       });
     }
+  }
+
+  /// Shows an optional note dialog after stopping a session to let the user add notes about the session
+
+  Future<String> _askForNotes() async {
+    final TextEditingController controller = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.card,
+        title: const Text(
+          'Add notes (optional)',
+          style: TextStyle(color: AppTheme.textPrimary),
+        ),
+        content: TextField(
+          controller: controller,
+          style: const TextStyle(color: AppTheme.textPrimary),
+          decoration: InputDecoration(
+            hintText:
+                'E.g. "Felt focused in the beginning but got distracted towards the end..."(optional)',
+            hintStyle: const TextStyle(color: AppTheme.textMuted),
+            filled: true,
+            fillColor: AppTheme.background,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text(
+              'Skip',
+              style: TextStyle(color: AppTheme.textMuted),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('Save', style: TextStyle(color: AppTheme.accent)),
+          ),
+        ],
+      ),
+    );
+    return controller.text.trim();
   }
 
   /// Shows the activity picker bottom sheet
