@@ -48,4 +48,26 @@ class DatabaseHelper {
     final db = await database;
     return await db.query('sessions', orderBy: 'id DESC');
   }
+
+  /// Returns the number of sessions saved today
+  Future<int> getTodaySessionCount() async {
+    final db = await database;
+    final today = DateTime.now().toIso8601String().substring(0, 10);
+    final result = await db.rawQuery(
+      'SELECT COUNT(*) as count FROM sessions WHERE date LIKE ?',
+      ['$today%'],
+    );
+    return Sqflite.firstIntValue(result) ?? 0;
+  }
+
+  /// Updates the notes of an existing session by its id
+  Future<void> updateSession(int id, String notes) async {
+    final db = await database;
+    await db.update(
+      'sessions',
+      {'notes': notes},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
 }
