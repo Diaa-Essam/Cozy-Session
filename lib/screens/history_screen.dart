@@ -12,22 +12,30 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
+  int _todayCount = 0;
+
   /// Holds the future that fetches all sessions from the database
+
+  /// Loads the number of sessions completed today
+  Future<void> _loadTodayCount() async {
+    final count = await DatabaseHelper.instance.getTodaySessionCount();
+    setState(() => _todayCount = count);
+  }
 
   late Future<List<Map<String, dynamic>>> _sessionsFuture;
 
   @override
   void initState() {
     super.initState();
-    // Load sessions when the screen first opens
     _sessionsFuture = DatabaseHelper.instance.getAllSessions();
+    _loadTodayCount(); // ← add this
   }
 
-  /// Reloads sessions from the database - called on manual refresh
   void _reload() {
     setState(() {
       _sessionsFuture = DatabaseHelper.instance.getAllSessions();
     });
+    _loadTodayCount(); // ← add this
   }
 
   @override
@@ -64,8 +72,20 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 'Your journey through focus and calm.',
                 style: TextStyle(color: AppTheme.textMuted, fontSize: 14),
               ),
-              const SizedBox(height: 24),
-              // Section 5 here
+              const SizedBox(height: 12),
+              Text(
+                _todayCount == 0
+                    ? 'No sessions today yet.'
+                    : _todayCount == 1
+                    ? '1 session today'
+                    : '$_todayCount sessions today',
+                style: const TextStyle(
+                  color: AppTheme.accent,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 12),
               Expanded(
                 child: FutureBuilder<List<Map<String, dynamic>>>(
                   future: _sessionsFuture,
